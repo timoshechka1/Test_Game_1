@@ -2,6 +2,8 @@ import pygame
 
 pygame.init()
 screen = pygame.display.set_mode((600, 300))
+pygame.display.set_caption("Test Game 1")
+pygame.display.set_icon(pygame.image.load("images/icon.png"))
 
 running = True
 
