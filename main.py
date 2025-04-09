@@ -10,7 +10,6 @@ text_surface = myfont.render('timoshechka1', False, 'Red')
 
 running = True
 while running:
-    screen.fill((172, 83, 219))
     pygame.draw.circle(screen, 'Red', (250, 150), 30)
     pygame.display.update()
     screen.blit(text_surface, (10, 10))
