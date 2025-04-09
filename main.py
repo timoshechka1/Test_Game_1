@@ -6,9 +6,9 @@ pygame.display.set_caption("Test Game 1")
 pygame.display.set_icon(pygame.image.load("images/icon.png"))
 
 running = True
-
 while running:
     screen.fill((172, 83, 219))
+    pygame.draw.circle(screen, 'Red', (250, 150), 30)
     pygame.display.update()
 
     for event in pygame.event.get():
