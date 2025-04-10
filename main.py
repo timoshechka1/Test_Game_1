@@ -39,7 +39,11 @@ while running:
     else:
         player_anim_count += 1
 
-    background_x -= 10
+    background_x -= 5
+
+    if background_x == -600:
+        background_x = 0
+
     pygame.display.update()
 
     for event in pygame.event.get():
