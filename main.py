@@ -27,6 +27,8 @@ moving_rigth = [
 
 player_anim_count = 0
 background_x = 0
+background_melody = pygame.mixer.Sound("sounds/background_melody.mp3")
+background_melody.play()
 
 running = True
 while running:
