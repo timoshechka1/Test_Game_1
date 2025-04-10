@@ -1,5 +1,7 @@
 import pygame
 
+clock = pygame.time.Clock()
+
 pygame.init()
 screen = pygame.display.set_mode((600, 476))
 pygame.display.set_caption("Test Game 1")
@@ -41,3 +43,5 @@ while running:
         if event.type == pygame.QUIT:
             running = False
             pygame.quit()
+
+    clock.tick(10)
