@@ -26,10 +26,12 @@ moving_rigth = [
 ]
 
 player_anim_count = 0
+background_x = 0
 
 running = True
 while running:
-    screen.blit(background, (0, 0))
+    screen.blit(background, (background_x, 0))
+    screen.blit(background, (background_x + 600, 0))
     screen.blit(moving_rigth[player_anim_count], (300, 350))
 
     if player_anim_count == 5:
@@ -37,6 +39,7 @@ while running:
     else:
         player_anim_count += 1
 
+    background_x -= 10
     pygame.display.update()
 
     for event in pygame.event.get():
