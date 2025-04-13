@@ -1,7 +1,7 @@
 import pygame
 
-def animation_character(general_anim_count, anim_count):
-    return 0 if general_anim_count == anim_count else general_anim_count + 1
+def animation_character(current_count, max_frames):
+    return (current_count + 1) % max_frames
 
 
 clock = pygame.time.Clock()
@@ -13,7 +13,7 @@ pygame.display.set_icon(pygame.image.load("images/icon.png").convert_alpha())
 
 background = pygame.image.load("images/background.png").convert_alpha()
 
-enemy_police_officer = [
+moving_enemy_police = [
     pygame.image.load("images/enemy_movement/enemy_movement_1.png").convert_alpha(),
     pygame.image.load("images/enemy_movement/enemy_movement_2.png").convert_alpha(),
 ]
@@ -39,9 +39,9 @@ moving_right = [
 player_anim_count = 0
 player_speed = 5
 player_x = 150
-player_y= 324
+player_y= 333
 is_jump = False
-jump_count = 5
+jump_count = 10
 
 background_x = 0
 background_melody = pygame.mixer.Sound("sounds/background_melody.mp3")
@@ -52,9 +52,13 @@ running = True
 while running:
     screen.blit(background, (background_x, 0))
     screen.blit(background, (background_x + 600, 0))
+
+    player_rect = moving_left[0].get_rect(topleft=(player_x, player_y))
+    enemy_rect = moving_enemy_police[0].get_rect(topleft=(enemy_x, 330))
+
     keys = pygame.key.get_pressed()
 
-    screen.blit(enemy_police_officer[enemy_anim_count], (enemy_x, 330))
+    screen.blit(moving_enemy_police[enemy_anim_count], (enemy_x, 330))
 
     if keys[pygame.K_LEFT]:
         screen.blit(moving_left[player_anim_count], (player_x, player_y))
@@ -80,8 +84,8 @@ while running:
             is_jump = False
             jump_count = 5
 
-    enemy_anim_count = animation_character(enemy_anim_count, 1)
-    player_anim_count = animation_character(player_anim_count, 5)
+    enemy_anim_count = animation_character(enemy_anim_count, len(moving_enemy_police))
+    player_anim_count = animation_character(player_anim_count, len(moving_right))
 
     background_x -= 5
 
