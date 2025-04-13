@@ -24,11 +24,17 @@ moving_right = [
     pygame.image.load("images/player_movement_right/player_movement_right_5.png"),
     pygame.image.load("images/player_movement_right/player_movement_right_6.png")
 ]
+enemy_police_officer = [
+    pygame.image.load("images/enemy_movement/enemy_movement_1.png"),
+    pygame.image.load("images/enemy_movement/enemy_movement_2.png"),
+]
+enemy_x = 610
+enemy_anim_count = 0
 
 player_anim_count = 0
 player_speed = 5
 player_x = 150
-player_y= 330
+player_y= 324
 is_jump = False
 jump_count = 5
 
@@ -40,6 +46,7 @@ running = True
 while running:
     screen.blit(background, (background_x, 0))
     screen.blit(background, (background_x + 600, 0))
+    screen.blit(enemy_police_officer[enemy_anim_count], (500, 330))
     keys = pygame.key.get_pressed()
 
 
@@ -66,6 +73,11 @@ while running:
         else:
             is_jump = False
             jump_count = 5
+
+    if enemy_anim_count == 1:
+        enemy_anim_count = 0
+    else:
+        enemy_anim_count += 1
 
     if player_anim_count == 5:
         player_anim_count = 0
