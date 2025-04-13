@@ -16,7 +16,7 @@ moving_left = [
     pygame.image.load("images/player_movement_left/player_movement_left_5.png"),
     pygame.image.load("images/player_movement_left/player_movement_left_6.png")
 ]
-moving_rigth = [
+moving_right = [
     pygame.image.load("images/player_movement_right/player_movement_right_1.png"),
     pygame.image.load("images/player_movement_right/player_movement_right_2.png"),
     pygame.image.load("images/player_movement_right/player_movement_right_3.png"),
@@ -36,9 +36,13 @@ running = True
 while running:
     screen.blit(background, (background_x, 0))
     screen.blit(background, (background_x + 600, 0))
-    screen.blit(moving_rigth[player_anim_count], (player_x, 350))
-
     keys = pygame.key.get_pressed()
+
+
+    if keys[pygame.K_LEFT]:
+        screen.blit(moving_left[player_anim_count], (player_x, 350))
+    else:
+        screen.blit(moving_right[player_anim_count], (player_x, 350))
 
     if keys[pygame.K_LEFT] and player_x > 50:
         player_x -= player_speed
