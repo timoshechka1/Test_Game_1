@@ -27,6 +27,8 @@ moving_rigth = [
 
 player_anim_count = 0
 background_x = 0
+player_speed = 5
+player_x = 150
 background_melody = pygame.mixer.Sound("sounds/background_melody.mp3")
 background_melody.play()
 
@@ -34,7 +36,14 @@ running = True
 while running:
     screen.blit(background, (background_x, 0))
     screen.blit(background, (background_x + 600, 0))
-    screen.blit(moving_rigth[player_anim_count], (300, 350))
+    screen.blit(moving_rigth[player_anim_count], (player_x, 350))
+
+    keys = pygame.key.get_pressed()
+
+    if keys[pygame.K_LEFT]:
+        player_x -= player_speed
+    elif keys[pygame.K_RIGHT]:
+        player_x += player_speed
 
     if player_anim_count == 5:
         player_anim_count = 0
