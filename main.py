@@ -1,5 +1,9 @@
 import pygame
 
+def animation_character(general_anim_count, anim_count):
+    return 0 if general_anim_count == anim_count else general_anim_count + 1
+
+
 clock = pygame.time.Clock()
 
 pygame.init()
@@ -8,6 +12,14 @@ pygame.display.set_caption("Test Game 1")
 pygame.display.set_icon(pygame.image.load("images/icon.png").convert_alpha())
 
 background = pygame.image.load("images/background.png").convert_alpha()
+
+enemy_police_officer = [
+    pygame.image.load("images/enemy_movement/enemy_movement_1.png").convert_alpha(),
+    pygame.image.load("images/enemy_movement/enemy_movement_2.png").convert_alpha(),
+]
+enemy_x = 610
+enemy_anim_count = 0
+
 moving_left = [
     pygame.image.load("images/player_movement_left/player_movement_left_1.png").convert_alpha(),
     pygame.image.load("images/player_movement_left/player_movement_left_2.png").convert_alpha(),
@@ -24,13 +36,6 @@ moving_right = [
     pygame.image.load("images/player_movement_right/player_movement_right_5.png").convert_alpha(),
     pygame.image.load("images/player_movement_right/player_movement_right_6.png").convert_alpha()
 ]
-enemy_police_officer = [
-    pygame.image.load("images/enemy_movement/enemy_movement_1.png").convert_alpha(),
-    pygame.image.load("images/enemy_movement/enemy_movement_2.png").convert_alpha(),
-]
-enemy_x = 610
-enemy_anim_count = 0
-
 player_anim_count = 0
 player_speed = 5
 player_x = 150
@@ -40,15 +45,16 @@ jump_count = 5
 
 background_x = 0
 background_melody = pygame.mixer.Sound("sounds/background_melody.mp3")
+background_melody.set_volume(0.01)
 background_melody.play()
 
 running = True
 while running:
     screen.blit(background, (background_x, 0))
     screen.blit(background, (background_x + 600, 0))
-    screen.blit(enemy_police_officer[enemy_anim_count], (enemy_x, 330))
     keys = pygame.key.get_pressed()
 
+    screen.blit(enemy_police_officer[enemy_anim_count], (enemy_x, 330))
 
     if keys[pygame.K_LEFT]:
         screen.blit(moving_left[player_anim_count], (player_x, player_y))
@@ -74,15 +80,8 @@ while running:
             is_jump = False
             jump_count = 5
 
-    if enemy_anim_count == 1:
-        enemy_anim_count = 0
-    else:
-        enemy_anim_count += 1
-
-    if player_anim_count == 5:
-        player_anim_count = 0
-    else:
-        player_anim_count += 1
+    enemy_anim_count = animation_character(enemy_anim_count, 1)
+    player_anim_count = animation_character(player_anim_count, 5)
 
     background_x -= 5
 
