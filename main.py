@@ -26,9 +26,13 @@ moving_right = [
 ]
 
 player_anim_count = 0
-background_x = 0
 player_speed = 5
 player_x = 150
+player_y= 330
+is_jump = False
+jump_count = 5
+
+background_x = 0
 background_melody = pygame.mixer.Sound("sounds/background_melody.mp3")
 background_melody.play()
 
@@ -40,14 +44,28 @@ while running:
 
 
     if keys[pygame.K_LEFT]:
-        screen.blit(moving_left[player_anim_count], (player_x, 350))
+        screen.blit(moving_left[player_anim_count], (player_x, player_y))
     else:
-        screen.blit(moving_right[player_anim_count], (player_x, 350))
+        screen.blit(moving_right[player_anim_count], (player_x, player_y))
 
     if keys[pygame.K_LEFT] and player_x > 50:
         player_x -= player_speed
     elif keys[pygame.K_RIGHT] and player_x < 200:
         player_x += player_speed
+
+    if not is_jump:
+        if keys[pygame.K_SPACE]:
+            is_jump = True
+    else:
+        if jump_count >= -5:
+            if jump_count > 0:
+                player_y -= (jump_count ** 2) / 2
+            else:
+                player_y += (jump_count ** 2) / 2
+            jump_count -= 1
+        else:
+            is_jump = False
+            jump_count = 5
 
     if player_anim_count == 5:
         player_anim_count = 0
