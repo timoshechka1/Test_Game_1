@@ -5,28 +5,28 @@ clock = pygame.time.Clock()
 pygame.init()
 screen = pygame.display.set_mode((600, 476))
 pygame.display.set_caption("Test Game 1")
-pygame.display.set_icon(pygame.image.load("images/icon.png"))
+pygame.display.set_icon(pygame.image.load("images/icon.png").convert_alpha())
 
-background = pygame.image.load("images/background.png")
+background = pygame.image.load("images/background.png").convert_alpha()
 moving_left = [
-    pygame.image.load("images/player_movement_left/player_movement_left_1.png"),
-    pygame.image.load("images/player_movement_left/player_movement_left_2.png"),
-    pygame.image.load("images/player_movement_left/player_movement_left_3.png"),
-    pygame.image.load("images/player_movement_left/player_movement_left_4.png"),
-    pygame.image.load("images/player_movement_left/player_movement_left_5.png"),
-    pygame.image.load("images/player_movement_left/player_movement_left_6.png")
+    pygame.image.load("images/player_movement_left/player_movement_left_1.png").convert_alpha(),
+    pygame.image.load("images/player_movement_left/player_movement_left_2.png").convert_alpha(),
+    pygame.image.load("images/player_movement_left/player_movement_left_3.png").convert_alpha(),
+    pygame.image.load("images/player_movement_left/player_movement_left_4.png").convert_alpha(),
+    pygame.image.load("images/player_movement_left/player_movement_left_5.png").convert_alpha(),
+    pygame.image.load("images/player_movement_left/player_movement_left_6.png").convert_alpha()
 ]
 moving_right = [
-    pygame.image.load("images/player_movement_right/player_movement_right_1.png"),
-    pygame.image.load("images/player_movement_right/player_movement_right_2.png"),
-    pygame.image.load("images/player_movement_right/player_movement_right_3.png"),
-    pygame.image.load("images/player_movement_right/player_movement_right_4.png"),
-    pygame.image.load("images/player_movement_right/player_movement_right_5.png"),
-    pygame.image.load("images/player_movement_right/player_movement_right_6.png")
+    pygame.image.load("images/player_movement_right/player_movement_right_1.png").convert_alpha(),
+    pygame.image.load("images/player_movement_right/player_movement_right_2.png").convert_alpha(),
+    pygame.image.load("images/player_movement_right/player_movement_right_3.png").convert_alpha(),
+    pygame.image.load("images/player_movement_right/player_movement_right_4.png").convert_alpha(),
+    pygame.image.load("images/player_movement_right/player_movement_right_5.png").convert_alpha(),
+    pygame.image.load("images/player_movement_right/player_movement_right_6.png").convert_alpha()
 ]
 enemy_police_officer = [
-    pygame.image.load("images/enemy_movement/enemy_movement_1.png"),
-    pygame.image.load("images/enemy_movement/enemy_movement_2.png"),
+    pygame.image.load("images/enemy_movement/enemy_movement_1.png").convert_alpha(),
+    pygame.image.load("images/enemy_movement/enemy_movement_2.png").convert_alpha(),
 ]
 enemy_x = 610
 enemy_anim_count = 0
@@ -46,7 +46,7 @@ running = True
 while running:
     screen.blit(background, (background_x, 0))
     screen.blit(background, (background_x + 600, 0))
-    screen.blit(enemy_police_officer[enemy_anim_count], (500, 330))
+    screen.blit(enemy_police_officer[enemy_anim_count], (enemy_x, 330))
     keys = pygame.key.get_pressed()
 
 
@@ -88,6 +88,8 @@ while running:
 
     if background_x == -600:
         background_x = 0
+
+    enemy_x -= 5
 
     pygame.display.update()
 
