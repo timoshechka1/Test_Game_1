@@ -19,6 +19,7 @@ moving_enemy_police = [
 ]
 enemy_x = 610
 enemy_anim_count = 0
+enemy_list_in_game = []
 
 moving_left = [
     pygame.image.load("images/player_movement_left/player_movement_left_1.png").convert_alpha(),
@@ -41,12 +42,15 @@ player_speed = 5
 player_x = 150
 player_y= 333
 is_jump = False
-jump_count = 10
+jump_count = 5
 
 background_x = 0
 background_melody = pygame.mixer.Sound("sounds/background_melody.mp3")
 background_melody.set_volume(0.01)
 background_melody.play()
+
+enemy_timer = pygame.USEREVENT + 1
+pygame.time.set_timer(enemy_timer, 1500)
 
 running = True
 while running:
@@ -54,11 +58,16 @@ while running:
     screen.blit(background, (background_x + 600, 0))
 
     player_rect = moving_left[0].get_rect(topleft=(player_x, player_y))
-    enemy_rect = moving_enemy_police[0].get_rect(topleft=(enemy_x, 330))
+
+    if enemy_list_in_game:
+        for element in enemy_list_in_game:
+            screen.blit(moving_enemy_police[enemy_anim_count], element)
+            element.x -= 10
+
+            if player_rect.colliderect(element):
+                print("LOSE")
 
     keys = pygame.key.get_pressed()
-
-    screen.blit(moving_enemy_police[enemy_anim_count], (enemy_x, 330))
 
     if keys[pygame.K_LEFT]:
         screen.blit(moving_left[player_anim_count], (player_x, player_y))
@@ -100,5 +109,7 @@ while running:
         if event.type == pygame.QUIT:
             running = False
             pygame.quit()
+        if event.type == enemy_timer:
+            enemy_list_in_game.append(moving_enemy_police[0].get_rect(topleft=(620, 330)))
 
     clock.tick(10)
