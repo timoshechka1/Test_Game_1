@@ -63,9 +63,12 @@ while running:
         player_rect = moving_left[0].get_rect(topleft=(player_x, player_y))
 
         if enemy_list_in_game:
-            for element in enemy_list_in_game:
+            for idx, element in enumerate(enemy_list_in_game):
                 screen.blit(moving_enemy_police[enemy_anim_count], element)
                 element.x -= 10
+
+                if element.x < -10:
+                    enemy_list_in_game.pop(idx)
 
                 if player_rect.colliderect(element):
                     gameplay = False
