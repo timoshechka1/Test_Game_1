@@ -14,10 +14,7 @@ pygame.display.set_icon(pygame.image.load("images/icon.png").convert_alpha())
 
 background = pygame.image.load("images/background.png").convert_alpha()
 
-moving_enemy_police = [
-    pygame.image.load("images/enemy_movement/enemy_movement_1.png").convert_alpha(),
-    pygame.image.load("images/enemy_movement/enemy_movement_2.png").convert_alpha(),
-]
+enemy_police = pygame.image.load("images/enemy_movement/enemy_movement_1.png").convert_alpha()
 enemy_anim_count = 0
 enemy_list_in_game = []
 
@@ -53,6 +50,9 @@ background_melody.play()
 enemy_timer = pygame.USEREVENT + 1
 pygame.time.set_timer(enemy_timer, random.randrange(2000, 3000, 500))
 
+label = pygame.font.Font("fonts/Roboto-Black.ttf", 80)
+lose_label = label.render("LOSE", False, (193, 196, 199))
+
 gameplay = True
 
 running = True
@@ -64,7 +64,7 @@ while running:
 
         if enemy_list_in_game:
             for idx, element in enumerate(enemy_list_in_game):
-                screen.blit(moving_enemy_police[enemy_anim_count], element)
+                screen.blit(enemy_police, element)
                 element.x -= 10
 
                 if element.x < -10:
@@ -99,7 +99,6 @@ while running:
                 is_jump = False
                 jump_count = 5
 
-        enemy_anim_count = animation_character(enemy_anim_count, len(moving_enemy_police))
         player_anim_count = animation_character(player_anim_count, len(moving_right))
 
         background_x -= 5
@@ -108,6 +107,7 @@ while running:
             background_x = 0
     else:
         screen.fill((87, 88, 89))
+        screen.blit(lose_label, (200, 180))
         background_melody.stop()
 
     pygame.display.update()
@@ -117,6 +117,6 @@ while running:
             running = False
             pygame.quit()
         if event.type == enemy_timer:
-            enemy_list_in_game.append(moving_enemy_police[0].get_rect(topleft=(620, 330)))
+            enemy_list_in_game.append(enemy_police.get_rect(topleft=(620, 330)))
 
     clock.tick(10)
