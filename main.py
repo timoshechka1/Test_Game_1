@@ -1,4 +1,5 @@
 import pygame
+import random
 
 def animation_character(current_count, max_frames):
     return (current_count + 1) % max_frames
@@ -17,7 +18,6 @@ moving_enemy_police = [
     pygame.image.load("images/enemy_movement/enemy_movement_1.png").convert_alpha(),
     pygame.image.load("images/enemy_movement/enemy_movement_2.png").convert_alpha(),
 ]
-enemy_x = 610
 enemy_anim_count = 0
 enemy_list_in_game = []
 
@@ -49,59 +49,63 @@ background_melody = pygame.mixer.Sound("sounds/background_melody.mp3")
 background_melody.set_volume(0.01)
 background_melody.play()
 
+
 enemy_timer = pygame.USEREVENT + 1
-pygame.time.set_timer(enemy_timer, 1500)
+pygame.time.set_timer(enemy_timer, random.randrange(2000, 3000, 500))
+
+gameplay = True
 
 running = True
 while running:
     screen.blit(background, (background_x, 0))
     screen.blit(background, (background_x + 600, 0))
+    if gameplay:
+        player_rect = moving_left[0].get_rect(topleft=(player_x, player_y))
 
-    player_rect = moving_left[0].get_rect(topleft=(player_x, player_y))
+        if enemy_list_in_game:
+            for element in enemy_list_in_game:
+                screen.blit(moving_enemy_police[enemy_anim_count], element)
+                element.x -= 10
 
-    if enemy_list_in_game:
-        for element in enemy_list_in_game:
-            screen.blit(moving_enemy_police[enemy_anim_count], element)
-            element.x -= 10
+                if player_rect.colliderect(element):
+                    gameplay = False
 
-            if player_rect.colliderect(element):
-                print("LOSE")
+        keys = pygame.key.get_pressed()
 
-    keys = pygame.key.get_pressed()
-
-    if keys[pygame.K_LEFT]:
-        screen.blit(moving_left[player_anim_count], (player_x, player_y))
-    else:
-        screen.blit(moving_right[player_anim_count], (player_x, player_y))
-
-    if keys[pygame.K_LEFT] and player_x > 50:
-        player_x -= player_speed
-    elif keys[pygame.K_RIGHT] and player_x < 200:
-        player_x += player_speed
-
-    if not is_jump:
-        if keys[pygame.K_SPACE]:
-            is_jump = True
-    else:
-        if jump_count >= -5:
-            if jump_count > 0:
-                player_y -= (jump_count ** 2) / 2
-            else:
-                player_y += (jump_count ** 2) / 2
-            jump_count -= 1
+        if keys[pygame.K_LEFT]:
+            screen.blit(moving_left[player_anim_count], (player_x, player_y))
         else:
-            is_jump = False
-            jump_count = 5
+            screen.blit(moving_right[player_anim_count], (player_x, player_y))
 
-    enemy_anim_count = animation_character(enemy_anim_count, len(moving_enemy_police))
-    player_anim_count = animation_character(player_anim_count, len(moving_right))
+        if keys[pygame.K_LEFT] and player_x > 50:
+            player_x -= player_speed
+        elif keys[pygame.K_RIGHT] and player_x < 200:
+            player_x += player_speed
 
-    background_x -= 5
+        if not is_jump:
+            if keys[pygame.K_SPACE]:
+                is_jump = True
+        else:
+            if jump_count >= -5:
+                if jump_count > 0:
+                    player_y -= (jump_count ** 2) / 2
+                else:
+                    player_y += (jump_count ** 2) / 2
+                jump_count -= 1
+            else:
+                is_jump = False
+                jump_count = 5
 
-    if background_x == -600:
-        background_x = 0
+        enemy_anim_count = animation_character(enemy_anim_count, len(moving_enemy_police))
+        player_anim_count = animation_character(player_anim_count, len(moving_right))
 
-    enemy_x -= 5
+        background_x -= 5
+
+        if background_x == -600:
+            background_x = 0
+    else:
+        screen.fill((87, 88, 89))
+        background_melody.stop()
 
     pygame.display.update()
 
