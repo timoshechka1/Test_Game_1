@@ -16,23 +16,20 @@ pygame.display.set_caption("Test Game 1")
 pygame.display.set_icon(pygame.image.load(settings.ICON_PATH).convert_alpha())
 
 background = pygame.image.load(settings.BACKGROUND_IMAGE_PATH).convert_alpha()
-
-enemies = []
-player = player.Player()
-
 background_x = 0
 background_melody = pygame.mixer.Sound(settings.BACKGROUND_MELODY)
 background_melody.set_volume(settings.BACKGROUND_MELODY_VOLUME)
 background_melody.play()
-
-enemy_timer = pygame.USEREVENT + 1
-pygame.time.set_timer(enemy_timer, spawner.get_random_spawn_time())
 
 label = pygame.font.Font(settings.FONT_PATH, 80)
 lose_label = label.render("LOSE", False, settings.TEXT_COLOR_LOSE)
 restart_label = label.render("RESTART", False, settings.TEXT_COLOR_RESTART)
 restart_label_rect = restart_label.get_rect(topleft=(120, 200))
 
+player = player.Player()
+enemies = []
+enemy_timer = pygame.USEREVENT + 1
+pygame.time.set_timer(enemy_timer, spawner.get_random_spawn_time())
 bottles = []
 
 gameplay = True
@@ -78,7 +75,6 @@ while running:
         if background_x == -600:
             background_x = 0
 
-        # Обновление и отображение бутылок
         for b in bottles[:]:
             b.update()
             b.draw(screen)
