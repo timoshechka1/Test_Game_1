@@ -141,16 +141,3 @@ class Player:
         """
         return self.rect
 
-    def throw_bottle(self):
-        """Creates a new bottle to throw.
-
-        Returns:
-        pygame.Rect: Hitbox of the created bottle with the initial position
-        (offset +50px from the character position)
-
-        Note:
-        - Loads the bottle image on each call (can be optimized)
-        - Returns only the Rect without creating the bottle object
-        """
-        image = pygame.image.load(settings.BOTTLE_IMAGE_PATH + "glass-bottle.png").convert_alpha()
-        return image.get_rect(topleft=(self.x + 50, self.y + 50))

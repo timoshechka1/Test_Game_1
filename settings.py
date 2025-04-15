@@ -1,6 +1,7 @@
 # Screen and frame settings
 SCREEN_WIDTH = 600
 SCREEN_HEIGHT = 476
+OBSTACLES_FRAMES = 3
 FPS = 10
 
 # Color settings
@@ -21,11 +22,15 @@ ENEMY_START_X = 620
 ENEMY_START_Y = 340
 ENEMY_SPEED = 10
 
+# Bottle settings
+BOTTLE_SPEED = 5
+BOTTLE_LIFETIME = 3
+BOTTLE_COOLDOWN = 0.5
+
 # Animation settings
 PLAYER_ANIM_FRAMES = 6
 ENEMY_ANIM_FRAMES = 8
-OBSTACLES_ANIM_FRAMES = 0
-BOTTLES_ANIM_FRAMES = 0
+BOTTLES_ANIM_FRAMES = 8
 
 # Sound settings
 BACKGROUND_MELODY = "sounds/background_melody.mp3"

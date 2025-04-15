@@ -1,6 +1,3 @@
-# Standard libraries
-import random
-
 # Third party libraries
 import pygame
 
@@ -9,6 +6,7 @@ import settings
 import player
 import enemy
 import spawner
+import bottle
 
 clock = pygame.time.Clock()
 
@@ -27,7 +25,6 @@ background_melody = pygame.mixer.Sound(settings.BACKGROUND_MELODY)
 background_melody.set_volume(settings.BACKGROUND_MELODY_VOLUME)
 background_melody.play()
 
-
 enemy_timer = pygame.USEREVENT + 1
 pygame.time.set_timer(enemy_timer, spawner.get_random_spawn_time())
 
@@ -36,15 +33,15 @@ lose_label = label.render("LOSE", False, settings.TEXT_COLOR_LOSE)
 restart_label = label.render("RESTART", False, settings.TEXT_COLOR_RESTART)
 restart_label_rect = restart_label.get_rect(topleft=(120, 200))
 
-bottle = pygame.image.load(settings.BOTTLE_IMAGE_PATH + "glass-bottle.png").convert_alpha()
 bottles = []
 
 gameplay = True
-
 running = True
+
 while running:
     screen.blit(background, (background_x, 0))
     screen.blit(background, (background_x + 600, 0))
+
     if gameplay:
 
         if enemies:
@@ -77,24 +74,25 @@ while running:
         elif keys[pygame.K_RIGHT] and player.x < settings.PLAYER_MOVE_LIMIT_RIGHT:
             player.x += player.speed
 
-
-
         background_x -= 5
-
         if background_x == -600:
             background_x = 0
 
-        if bottles:
-            for i, el in enumerate(bottles):
-                screen.blit(bottle, (el.x, el.y))
-                el.x += 4
-                if el.x > 610:
-                    bottles.pop(i)
-                for idx, en in enumerate(enemies):
-                    if el.colliderect(en.get_rect()):
-                        enemies.pop(idx)
-                        bottles.pop(i)
-                        break
+        # Обновление и отображение бутылок
+        for b in bottles[:]:
+            b.update()
+            b.draw(screen)
+
+            if not b.is_active or b.is_off_screen():
+                bottles.remove(b)
+                continue
+
+            for e in enemies[:]:
+                if b.get_rect().colliderect(e.get_rect()):
+                    enemies.remove(e)
+                    bottles.remove(b)
+                    break
+
     else:
         screen.fill(settings.COLOR_SCREEN_LOSE)
         screen.blit(lose_label, (200, 100))
@@ -119,6 +117,8 @@ while running:
             enemies.append(enemy.Enemy())
             pygame.time.set_timer(enemy_timer, spawner.get_random_spawn_time())
         if gameplay and event.type == pygame.KEYUP and event.key == pygame.K_b:
-            bottles.append(player.throw_bottle())
+            new_bottle = bottle.throw_bottle(player.x, player.y)
+            if new_bottle:
+                bottles.append(new_bottle)
 
     clock.tick(settings.FPS)
