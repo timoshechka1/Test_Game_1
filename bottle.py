@@ -14,13 +14,13 @@ class Bottle:
         Attributes:
             x (int): Current x-coordinate position
             y (int): Current y-coordinate position
-            speed (int): Movement speed (pixels per frame) from settings.BOTTLE_SPEED
+            speed (int): Movement speed from settings.BOTTLE_SPEED
             frames (int): Number of animation frames from settings.BOTTLES_ANIM_FRAMES
-            moving (list): List of loaded animation frames as pygame.Surface objects
+            moving (list[pygame.Surface]): Loaded animation frames
             anim_count (int): Current animation frame index
-            rect (pygame.Rect): Collision rectangle for the bottle
-            creation_time (float): Time when bottle was created (in seconds since epoch)
-            is_active (bool): Whether the bottle should be updated and drawn
+            rect (pygame.Rect): Collision rectangle
+            creation_time (float): Creation timestamp (seconds since epoch)
+            is_active (bool): Whether the bottle should be updated
         """
         self.x = x
         self.y = y
@@ -28,7 +28,8 @@ class Bottle:
         self.frames = settings.BOTTLES_ANIM_FRAMES
         self.moving = [
             pygame.image.load(f"{settings.BOTTLE_IMAGE_PATH}bottle_{i}.png").convert_alpha()
-            for i in range(1, self.frames + 1)]
+            for i in range(1, self.frames + 1)
+        ]
         self.anim_count = 0
         self.rect = self.moving[0].get_rect(topleft=(self.x, self.y))
         self.creation_time = time.time()

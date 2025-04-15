@@ -29,12 +29,15 @@ class Player:
         self.speed = settings.PLAYER_SPEED
         self.is_jump = False
         self.jump_count = settings.PLAYER_JUMP_COUNT
+        self.jump_direction_x = 0
         self.moving_left = [
             pygame.image.load(f"{settings.PLAYER_LEFT_PATH}player_movement_left_{i}.png").convert_alpha()
-            for i in range(1, self.frames + 1)]
+            for i in range(1, self.frames + 1)
+        ]
         self.moving_right = [
             pygame.image.load(f"{settings.PLAYER_RIGHT_PATH}player_movement_right_{i}.png").convert_alpha()
-            for i in range(1, self.frames + 1)]
+            for i in range(1, self.frames + 1)
+        ]
         self.anim_count = 0
         self.direction = "right"
         self.rect = self.moving_right[0].get_rect(topleft=(self.x, self.y))
@@ -78,6 +81,11 @@ class Player:
         """
         if not self.is_jump:
             self.is_jump = True
+            # Задаём направление прыжка в зависимости от текущего направления
+            if self.direction == "right":
+                self.jump_direction_x = 3  # подбери значение (1–3)
+            else:
+                self.jump_direction_x = -3
 
     def update(self):
         """Updates the character state every frame.
@@ -95,12 +103,24 @@ class Player:
                     self.y -= (self.jump_count ** 2)
                 else:
                     self.y += (self.jump_count ** 2)
+                # ➕ Добавляем движение по X во время прыжка
+                new_x = self.x + self.jump_direction_x
+                if settings.PLAYER_MOVE_LIMIT_LEFT <= new_x <= settings.PLAYER_MOVE_LIMIT_RIGHT:
+                    self.x = new_x
                 self.jump_count -= 1
             else:
                 self.is_jump = False
                 self.jump_count = settings.PLAYER_JUMP_COUNT
+                self.jump_direction_x = 0  # сброс
 
-        self.rect = self.get_current_image().get_rect(topleft=(self.x, self.y))
+        image_rect = self.get_current_image().get_rect(topleft=(self.x, self.y))
+        # Уменьшаем хитбокс — например, на 10 пикселей по ширине и 10 по высоте
+        self.rect = pygame.Rect(
+            image_rect.left + 25,
+            image_rect.top + 15,
+            image_rect.width - 50,
+            image_rect.height - 30
+        )
 
     def draw(self, screen):
         """Draws a character on the specified surface.
@@ -114,6 +134,7 @@ class Player:
         """
         current_image = self.get_current_image()
         screen.blit(current_image, (self.x, self.y))
+        pygame.draw.rect(screen, (255, 0, 0), self.rect, 1)
 
     def reset(self):
         """Resets the character state to its initial values.
@@ -131,7 +152,14 @@ class Player:
         self.jump_count = settings.PLAYER_JUMP_COUNT
         self.anim_count = 0
         self.direction = "right"
-        self.rect = self.moving_right[0].get_rect(topleft=(self.x, self.y))
+        image_rect = self.get_current_image().get_rect(topleft=(self.x, self.y))
+        # Уменьшаем хитбокс — например, на 10 пикселей по ширине и 10 по высоте
+        self.rect = pygame.Rect(
+            image_rect.left + 25,
+            image_rect.top + 15,
+            image_rect.width - 50,
+            image_rect.height - 30
+        )
 
     def get_rect(self):
         """Returns the current hitbox of the character for collision handling.

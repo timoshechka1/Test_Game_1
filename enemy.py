@@ -27,7 +27,8 @@ class Enemy:
         self.frames = settings.ENEMY_ANIM_FRAMES
         self.moving = [
             pygame.image.load(f"{settings.ENEMY_IMAGE_PATH}policeman_{i}.png").convert_alpha()
-            for i in range(1, self.frames + 1)]
+            for i in range(1, self.frames + 1)
+        ]
         self.anim_count = 0
         self.rect = self.moving[0].get_rect(topleft=(self.x, self.y))
 
@@ -55,6 +56,7 @@ class Enemy:
         Uses the current animation frame from self.anim_count
         """
         screen.blit(self.moving[self.anim_count], (self.x, self.y))
+        pygame.draw.rect(screen, (255, 0, 0), self.rect, 1)
 
     def get_rect(self):
         """Returns the current enemy hitbox.

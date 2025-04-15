@@ -9,6 +9,7 @@ import spawner
 import bottle
 import ui
 import sound
+import obstacle
 
 clock = pygame.time.Clock()
 pygame.init()
@@ -25,6 +26,12 @@ player_instance = player.Player()
 enemies = []
 enemy_timer = pygame.USEREVENT + 1
 pygame.time.set_timer(enemy_timer, spawner.get_random_spawn_time())
+enemies_killed = 0
+enemy_icon = pygame.image.load(settings.ASSET_PATH + "policeman_icon.png").convert_alpha()
+enemy_icon = pygame.transform.scale(enemy_icon, (50, 40))
+obstacles = []
+obstacle_timer = pygame.USEREVENT + 2
+pygame.time.set_timer(obstacle_timer, spawner.get_random_spawn_time())
 bottles = []
 
 gameplay = True
@@ -35,6 +42,15 @@ while running:
     screen.blit(background, (background_x + 600, 0))
 
     if gameplay:
+        for obs in obstacles[:]:
+            obs.update()
+            obs.draw(screen)
+
+            if obs.is_off_screen():
+                obstacles.remove(obs)
+            elif player_instance.get_rect().colliderect(obs.get_rect()):
+                gameplay = False
+                sound.stop_background_music()
 
         if enemies:
             for idx, en in enumerate(enemies):
@@ -83,9 +99,12 @@ while running:
                 if b.get_rect().colliderect(e.get_rect()):
                     enemies.remove(e)
                     bottles.remove(b)
+                    enemies_killed += 1
                     break
     else:
         ui.draw_game_over(screen)
+
+    ui.draw_enemy_counter(screen, enemies_killed, enemy_icon, gameplay)
     pygame.display.update()
 
     for event in pygame.event.get():
@@ -94,17 +113,27 @@ while running:
                 gameplay = True
                 player_instance.reset()
                 enemies.clear()
+                obstacles.clear()
                 bottles.clear()
                 sound.play_background_music()
+                enemies_killed = 0
+
         if event.type == pygame.QUIT:
             running = False
-        if event.type == enemy_timer:
+
+        if event.type == enemy_timer and gameplay:
             enemies.append(enemy.Enemy())
             pygame.time.set_timer(enemy_timer, spawner.get_random_spawn_time())
-        if gameplay and event.type == pygame.KEYDOWN and event.key == pygame.K_b:
-            new_bottle = bottle.throw_bottle(player_instance.x, player_instance.y)
-            if new_bottle:
-                bottles.append(new_bottle)
+
+        if event.type == obstacle_timer and gameplay:
+            obstacles.append(obstacle.Obstacle())
+            pygame.time.set_timer(obstacle_timer, spawner.get_random_spawn_time())
+
+        if gameplay and event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_b:  # Четкая проверка конкретной клавиши
+                new_bottle = bottle.throw_bottle(player_instance.x, player_instance.y)
+                if new_bottle:
+                    bottles.append(new_bottle)
 
     clock.tick(settings.FPS)
 pygame.quit()
