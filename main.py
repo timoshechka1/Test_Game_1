@@ -55,6 +55,9 @@ lose_label = label.render("LOSE", False, (193, 196, 199))
 restart_label = label.render("RESTART", False, (115, 132, 148))
 restart_label_rect = restart_label.get_rect(topleft=(120, 200))
 
+bottle = pygame.image.load('images/glass-bottle.png').convert_alpha()
+bottles = []
+
 gameplay = True
 
 running = True
@@ -107,6 +110,21 @@ while running:
 
         if background_x == -600:
             background_x = 0
+
+        if keys[pygame.K_b]:
+            bottles.append(bottle.get_rect(topleft=(player_x + 50, player_y + 50)))
+
+        if bottles:
+            for i, el in enumerate(bottles):
+                screen.blit(bottle, (el.x, el.y))
+                el.x += 4
+                if el.x > 610:
+                    bottles.pop(i)
+                if enemy_list_in_game:
+                    for idx, enemy in enumerate(enemy_list_in_game):
+                        if el.colliderect(enemy):
+                            enemy_list_in_game.pop(idx)
+                            bottles.pop(i)
     else:
         screen.fill((87, 88, 89))
         screen.blit(lose_label, (200, 100))
@@ -118,6 +136,7 @@ while running:
             gameplay = True
             player_x = 150
             enemy_list_in_game.clear()
+            bottles.clear()
             background_melody.play()
 
     pygame.display.update()
