@@ -8,6 +8,7 @@ import pygame
 import settings
 import player
 import enemy
+import spawner
 
 clock = pygame.time.Clock()
 
@@ -28,9 +29,7 @@ background_melody.play()
 
 
 enemy_timer = pygame.USEREVENT + 1
-pygame.time.set_timer(enemy_timer, random.randrange(settings.ENEMY_SPAWN_MIN_TIME,
-                                                    settings.ENEMY_SPAWN_MAX_TIME,
-                                                    settings.ENEMY_SPAWN_STEP))
+pygame.time.set_timer(enemy_timer, spawner.get_random_spawn_time())
 
 label = pygame.font.Font(settings.FONT_PATH, 80)
 lose_label = label.render("LOSE", False, settings.TEXT_COLOR_LOSE)
@@ -118,6 +117,7 @@ while running:
             pygame.quit()
         if event.type == enemy_timer:
             enemies.append(enemy.Enemy())
+            pygame.time.set_timer(enemy_timer, spawner.get_random_spawn_time())
         if gameplay and event.type == pygame.KEYUP and event.key == pygame.K_b:
             bottles.append(player.throw_bottle())
 
