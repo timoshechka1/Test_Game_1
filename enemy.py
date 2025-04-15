@@ -1,25 +1,32 @@
+"""
+ENEMY CLASS DOCUMENTATION
+
+This class represents enemy entities in the game that move toward the player.
+Enemies feature animated movement and collision detection.
+"""
 import pygame
 import settings
 
 class Enemy:
     def __init__(self):
-        """Initializes the enemy with the initial parameters.
+        """
+        Initialize a new enemy instance.
 
-        Sets:
-        - Start position (x, y) from settings
-        - Movement speed (speed)
-        - Loads animation frames
-        - Initializes the animation counter
-        - Creates a hitbox (rect) for collisions
+        Initialization Process:
+        1. Sets starting position from settings (ENEMY_START_X, ENEMY_START_Y)
+        2. Configures movement speed from settings
+        3. Loads animation frames from ENEMY_IMAGE_PATH
+        4. Sets up animation system
+        5. Creates initial collision rectangle
 
         Attributes:
-        x (int): Start X-coordinate from settings.ENEMY_START_X
-        y (int): Start Y-coordinate from settings.ENEMY_START_Y
-        speed (int): Movement speed from settings.ENEMY_SPEED
-        frames (int): Number of animation frames from settings.ENEMY_ANIM_FRAMES
-        moving (list): List of loaded Surfaces with animation frames
-        anim_count (int): Current animation frame index (0..frames-1)
-        rect (Rect): Enemy hitbox
+            x (int): Current x-position (updated each frame)
+            y (int): Fixed y-position (from settings)
+            speed (int): Movement speed (from settings.ENEMY_SPEED)
+            frames (int): Number of animation frames (from settings.ENEMY_ANIM_FRAMES)
+            moving (list): Animation frame surfaces
+            anim_count (int): Current animation frame index
+            rect (pygame.Rect): Collision rectangle (updated each frame)
         """
         self.x = settings.ENEMY_START_X
         self.y = settings.ENEMY_START_Y
@@ -29,16 +36,23 @@ class Enemy:
             pygame.image.load(f"{settings.ENEMY_IMAGE_PATH}policeman_{i}.png").convert_alpha()
             for i in range(1, self.frames + 1)
         ]
+
         self.anim_count = 0
         self.rect = self.moving[0].get_rect(topleft=(self.x, self.y))
 
     def update(self):
-        """Updates the enemy state every frame.
+        """
+        Update enemy state each frame.
 
-        Does:
-        1. Move the enemy left at the given speed
-        2. Update the animation counter (looping)
-        3. Update the hitbox position
+        Performs:
+        1. Movement: Moves left at constant speed
+        2. Animation: Cycles through animation frames
+        3. Collision: Updates collision rectangle position
+
+        Animation Logic:
+        - Advances anim_count each frame
+        - Loops back to 0 when reaching last frame
+        - Updates rect to match current frame and position
         """
         self.x -= self.speed
         self.anim_count += 1
@@ -47,34 +61,42 @@ class Enemy:
         self.rect = self.moving[self.anim_count].get_rect(topleft=(self.x, self.y))
 
     def draw(self, screen):
-        """Draws an enemy on the specified surface.
+        """
+        Render the enemy on screen.
 
         Args:
-        screen (pygame.Surface): Target surface to draw
+            screen (pygame.Surface): The game display surface
 
-        Note:
-        Uses the current animation frame from self.anim_count
+        Rendering:
+        - Uses current animation frame (moving[anim_count])
+        - Draws at current (x,y) position
+        - No additional transformations applied
         """
         screen.blit(self.moving[self.anim_count], (self.x, self.y))
-        pygame.draw.rect(screen, (255, 0, 0), self.rect, 1)
 
     def get_rect(self):
-        """Returns the current enemy hitbox.
+        """
+        Get the enemy's collision rectangle.
 
         Returns:
-        pygame.Rect: Rectangle describing the current bounds of the enemy
-        for collision handling
+            pygame.Rect: The current collision rectangle
+                         (matches current frame and position)
+
+        Note:
+            Rectangle is updated each frame in update() method
         """
         return self.rect
 
     def is_off_screen(self):
-        """Checks if the enemy has left the screen boundaries on the left.
+        """
+        Check if enemy has moved completely off left screen edge.
 
         Returns:
-        bool: True if the enemy is completely hidden beyond the left border of the screen,
-        False if still visible
+            bool: True if enemy's right edge is past screen left boundary
+                  False if still visible on screen
 
-        Note:
-        Take into account the sprite width for an accurate check
+        Calculation:
+        Checks if x-position plus width is less than 0
+        (entire sprite is left of screen)
         """
         return self.x < -self.rect.width

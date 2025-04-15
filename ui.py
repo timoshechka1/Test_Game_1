@@ -1,3 +1,9 @@
+"""
+UI MODULE DOCUMENTATION
+
+This module handles all user interface rendering and interaction logic,
+including game over screens, buttons, and in-game HUD elements.
+"""
 import pygame
 import settings
 
@@ -5,22 +11,32 @@ import settings
 pygame.font.init()
 
 # UI Elements
+# Main label font for game over text
 label = pygame.font.Font(settings.FONT_PATH, 80)
+
+# Game over text surface
 lose_label = label.render("LOSE", False, settings.TEXT_COLOR_LOSE)
+
+# Restart button surface
 restart_label = label.render("RESTART", False, settings.TEXT_COLOR_RESTART)
+
+# Restart button collision rectangle
 restart_label_rect = restart_label.get_rect(topleft=(190, 200))
 
 def draw_game_over(screen):
     """
-    Draws the game over screen with lose message and restart button.
+    Renders the complete game over screen interface.
 
     Args:
-        screen (pygame.Surface): The game screen surface to draw on
+        screen (pygame.Surface): The game's display surface to render on
 
-    Effects:
-        - Fills screen with lose background color (settings.COLOR_SCREEN_LOSE)
-        - Draws 'LOSE' text centered horizontally at y=100
-        - Draws 'RESTART' button at position (120, 200)
+    Behavior:
+        1. Fills the screen with the lose background color (COLOR_SCREEN_LOSE)
+        2. Draws the 'LOSE' text centered horizontally at y=100
+        3. Draws the restart button at its predefined position
+
+    Note:
+        Uses pre-rendered text surfaces for better performance
     """
     screen.fill(settings.COLOR_SCREEN_LOSE)
     screen.blit(lose_label, (230, 100))
@@ -28,30 +44,39 @@ def draw_game_over(screen):
 
 def is_restart_clicked(pos):
     """
-    Checks if restart button was clicked.
+    Detects if the restart button was clicked.
 
     Args:
-        pos (tuple): (x, y) mouse position coordinates to check
+        pos (tuple): Mouse coordinates (x, y) to check against button bounds
 
     Returns:
-        bool: True if mouse position is within restart button bounds,
+        bool: True if coordinates are within restart button's collision rect,
               False otherwise
 
-    Note:
-        Uses the pre-defined restart_label_rect collision rectangle
+    Implementation:
+        Uses pygame.Rect.collidepoint() for precise collision detection
     """
     return restart_label_rect.collidepoint(pos)
 
 
 def draw_enemy_counter(screen, count, icon, is_game_active):
     """
-    Рисует счетчик убийств только при активной игре
+    Renders the enemy kill counter HUD element during active gameplay.
 
     Args:
-        screen: Поверхность для отрисовки
-        count: Текущее количество убийств
-        icon: Иконка врага (Surface)
-        is_game_active: Флаг активности игры (True/False)
+        screen (pygame.Surface): Game display surface to render on
+        count (int): Current number of enemy kills to display
+        icon (pygame.Surface): Enemy icon image surface
+        is_game_active (bool): Game state flag (True = game running)
+
+    Behavior:
+        - Only renders when is_game_active is True
+        - Draws enemy icon followed by kill count
+        - Positions counter at top-left (20, 20)
+        - Uses white text with 34px font size
+
+    Visual Format:
+        [Enemy Icon] x [Count]
     """
     if not is_game_active:
         return

@@ -1,27 +1,41 @@
+"""
+PLAYER CLASS DOCUMENTATION
+
+This class implements the player character with:
+- Movement controls (left/right)
+- Jump mechanics with parabolic trajectory
+- Animation system for both directions
+- Collision detection
+"""
 import pygame
 import settings
 
 class Player:
+    """The main player character with movement and animation capabilities.
+
+    Attributes:
+        x (int): Current x-position
+        y (int): Current y-position
+        frames (int): Number of animation frames
+        speed (int): Horizontal movement speed
+        is_jump (bool): Jump state flag
+        jump_count (int): Current jump progress counter
+        jump_direction_x (int): Horizontal jump direction (+right/-left)
+        moving_left (list): Left-facing animation frames
+        moving_right (list): Right-facing animation frames
+        anim_count (int): Current animation frame index
+        direction (str): Facing direction ('left'/'right')
+        rect (pygame.Rect): Collision rectangle (smaller than sprite)
+    """
     def __init__(self):
-        """Initializes the player character with the initial parameters.
+        """Initialize player with default position and loaded assets.
 
-        Loads all necessary resources and sets the initial state:
-        - Position (x, y) from settings
-        - Movement parameters (speed, jump)
-        - Left/right movement animations
-        - Hitbox (rect) for collisions
-
-        Attributes:
-        x (int): Starting X-coordinate from settings.PLAYER_START_X
-        y (int): Starting Y-coordinate from settings.PLAYER_START_Y
-        speed (int): Movement speed from settings.PLAYER_SPEED
-        is_jump (bool): Jump state flag (False by default)
-        jump_count (int): Jump counter from settings.PLAYER_JUMP_COUNT
-        moving_left (list[Surface]): List of left movement sprites
-        moving_right (list[Surface]): List of movement sprites right
-        anim_count (int): Animation frame counter
-        direction (str): Current direction ('right'/'left')
-        rect (Rect): Character hitbox at starting position
+        Initializes:
+        - Starting position from settings
+        - Movement parameters
+        - Animation frames for both directions
+        - Jump system
+        - Collision rectangle
         """
         self.x = settings.PLAYER_START_X
         self.y = settings.PLAYER_START_Y
@@ -30,6 +44,8 @@ class Player:
         self.is_jump = False
         self.jump_count = settings.PLAYER_JUMP_COUNT
         self.jump_direction_x = 0
+
+        # Load animation frames
         self.moving_left = [
             pygame.image.load(f"{settings.PLAYER_LEFT_PATH}player_movement_left_{i}.png").convert_alpha()
             for i in range(1, self.frames + 1)
@@ -38,35 +54,40 @@ class Player:
             pygame.image.load(f"{settings.PLAYER_RIGHT_PATH}player_movement_right_{i}.png").convert_alpha()
             for i in range(1, self.frames + 1)
         ]
+
         self.anim_count = 0
         self.direction = "right"
         self.rect = self.moving_right[0].get_rect(topleft=(self.x, self.y))
 
     def move_right(self):
-        """Moves the character to the right, taking into account the movement limits.
+        """Initiate rightward movement.
 
-        Increases the X coordinate by the speed value if the left limit (PLAYER_MOVE_LIMIT_LEFT) has not been reached.
-        Updates the view direction.
+        Effects:
+            - Increases x-position within movement bounds
+            - Sets facing direction to right
+            - Respects PLAYER_MOVE_LIMIT_LEFT boundary
         """
         if self.x < settings.PLAYER_MOVE_LIMIT_LEFT:
             self.x += self.speed
         self.direction = "right"
 
     def move_left(self):
-        """Moves the character to the left, taking into account the movement limits.
+        """Initiate leftward movement.
 
-        Decreases the X coordinate by the speed value if the right limit (PLAYER_MOVE_LIMIT_RIGHT) is not reached.
-        Updates the view direction.
+        Effects:
+            - Decreases x-position within movement bounds
+            - Sets facing direction to left
+            - Respects PLAYER_MOVE_LIMIT_RIGHT boundary
         """
         if self.x > settings.PLAYER_MOVE_LIMIT_RIGHT:
             self.x -= self.speed
         self.direction = "left"
 
     def get_current_image(self):
-        """Returns the current character sprite based on the direction.
+        """Get the current animation frame based on direction.
 
         Returns:
-        Surface: The current animation frame for the corresponding direction of movement.
+            pygame.Surface: Current animation frame surface
         """
         if self.direction == 'left':
             return self.moving_left[self.anim_count]
@@ -74,77 +95,81 @@ class Player:
             return self.moving_right[self.anim_count]
 
     def jump(self):
-        """Triggers the character to jump if it is not in the jump state.
+        """Initiate jump if not already jumping.
 
-        Sets the is_jump flag to True, which triggers the jump physics
-        in the update() method.
+        Sets up:
+            - Jump state flag
+            - Horizontal jump direction based on facing
+            - Uses quadratic function for jump arc
         """
         if not self.is_jump:
             self.is_jump = True
-            # Задаём направление прыжка в зависимости от текущего направления
+
             if self.direction == "right":
-                self.jump_direction_x = 3  # подбери значение (1–3)
+                self.jump_direction_x = 3
             else:
                 self.jump_direction_x = -3
 
     def update(self):
-        """Updates the character state every frame.
+        """Update player state each frame.
 
-        Performs:
-        1. Cyclic update of the animation counter
-        2. Processing the jump physics (parabolic trajectory)
-        3. Update the character's hitbox
+        Handles:
+            - Animation frame progression
+            - Jump physics (parabolic trajectory)
+            - Movement boundaries during jump
+            - Collision rectangle updates
         """
+        # Advance animation
         self.anim_count = (self.anim_count + 1) % len(self.moving_right)
 
+        # Jump mechanics
         if self.is_jump:
             if self.jump_count >= -5:
+                # Vertical movement (quadratic curve)
                 if self.jump_count > 0:
                     self.y -= (self.jump_count ** 2)
                 else:
                     self.y += (self.jump_count ** 2)
-                # ➕ Добавляем движение по X во время прыжка
+
+                # Horizontal movement with boundary check
                 new_x = self.x + self.jump_direction_x
                 if settings.PLAYER_MOVE_LIMIT_LEFT <= new_x <= settings.PLAYER_MOVE_LIMIT_RIGHT:
                     self.x = new_x
                 self.jump_count -= 1
             else:
+                # Reset jump state
                 self.is_jump = False
                 self.jump_count = settings.PLAYER_JUMP_COUNT
-                self.jump_direction_x = 0  # сброс
+                self.jump_direction_x = 0
 
+        # Update collision rect (smaller than sprite)
         image_rect = self.get_current_image().get_rect(topleft=(self.x, self.y))
-        # Уменьшаем хитбокс — например, на 10 пикселей по ширине и 10 по высоте
+
         self.rect = pygame.Rect(
-            image_rect.left + 25,
-            image_rect.top + 15,
-            image_rect.width - 50,
-            image_rect.height - 30
+            image_rect.left + 25,  # Left padding
+            image_rect.top + 15,   # Top padding
+            image_rect.width - 50,  # Width reduction
+            image_rect.height - 30  # Height reduction
         )
 
     def draw(self, screen):
-        """Draws a character on the specified surface.
+        """Draw player on screen.
 
         Args:
-        screen (pygame.Surface): Surface to draw on (usually the game screen)
-
-        Actions:
-        1. Gets the current character sprite
-        2. Draws the sprite on the surface at position (self.x, self.y)
+            screen (pygame.Surface): Target surface for rendering
         """
         current_image = self.get_current_image()
         screen.blit(current_image, (self.x, self.y))
-        pygame.draw.rect(screen, (255, 0, 0), self.rect, 1)
 
     def reset(self):
-        """Resets the character state to its initial values.
+        """Reset player to initial state.
 
-        Restores:
-        - Position (x, y) from settings
-        - Jump parameters
-        - Animation counter
-        - View direction
-        - Hitbox (rect)
+        Resets:
+            - Position to starting coordinates
+            - Jump state
+            - Animation frame
+            - Facing direction
+            - Collision rectangle
         """
         self.x = settings.PLAYER_START_X
         self.y = settings.PLAYER_START_Y
@@ -153,7 +178,8 @@ class Player:
         self.anim_count = 0
         self.direction = "right"
         image_rect = self.get_current_image().get_rect(topleft=(self.x, self.y))
-        # Уменьшаем хитбокс — например, на 10 пикселей по ширине и 10 по высоте
+
+        # Recalculate collision rect
         self.rect = pygame.Rect(
             image_rect.left + 25,
             image_rect.top + 15,
@@ -162,10 +188,9 @@ class Player:
         )
 
     def get_rect(self):
-        """Returns the current hitbox of the character for collision handling.
+        """Get current collision rectangle.
 
         Returns:
-        pygame.Rect: Rectangle describing the current position and size of the character
+            pygame.Rect: Current collision bounds
         """
         return self.rect
-
