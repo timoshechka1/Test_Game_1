@@ -1,10 +1,12 @@
-import pygame
+# Standard libraries
 import random
+
+# Third party libraries
+import pygame
+
+# Local modules
 import settings
-
-def animation_character(current_count, max_frames):
-    return (current_count + 1) % max_frames
-
+import player
 
 clock = pygame.time.Clock()
 
@@ -19,24 +21,7 @@ enemy_police = pygame.image.load(settings.ENEMY_IMAGE_PATH + "enemy_movement_1.p
 enemy_anim_count = 0
 enemy_list_in_game = []
 
-moving_left = [
-    pygame.image.load(settings.PLAYER_LEFT_PATH + "player_movement_left_1.png").convert_alpha(),
-    pygame.image.load(settings.PLAYER_LEFT_PATH + "player_movement_left_2.png").convert_alpha(),
-    pygame.image.load(settings.PLAYER_LEFT_PATH + "player_movement_left_3.png").convert_alpha(),
-    pygame.image.load(settings.PLAYER_LEFT_PATH + "player_movement_left_4.png").convert_alpha(),
-    pygame.image.load(settings.PLAYER_LEFT_PATH + "player_movement_left_5.png").convert_alpha(),
-    pygame.image.load(settings.PLAYER_LEFT_PATH + "player_movement_left_6.png").convert_alpha()
-]
-moving_right = [
-    pygame.image.load(settings.PLAYER_RIGHT_PATH + "player_movement_right_1.png").convert_alpha(),
-    pygame.image.load(settings.PLAYER_RIGHT_PATH + "player_movement_right_2.png").convert_alpha(),
-    pygame.image.load(settings.PLAYER_RIGHT_PATH + "player_movement_right_3.png").convert_alpha(),
-    pygame.image.load(settings.PLAYER_RIGHT_PATH + "player_movement_right_4.png").convert_alpha(),
-    pygame.image.load(settings.PLAYER_RIGHT_PATH + "player_movement_right_5.png").convert_alpha(),
-    pygame.image.load(settings.PLAYER_RIGHT_PATH + "player_movement_right_6.png").convert_alpha()
-]
-player_anim_count = 0
-is_jump = False
+player = player.Player()
 
 background_x = 0
 background_melody = pygame.mixer.Sound(settings.BACKGROUND_MELODY)
@@ -64,7 +49,6 @@ while running:
     screen.blit(background, (background_x, 0))
     screen.blit(background, (background_x + 600, 0))
     if gameplay:
-        player_rect = moving_left[0].get_rect(topleft=(settings.PLAYER_START_X, settings.PLAYER_START_Y))
 
         if enemy_list_in_game:
             for idx, element in enumerate(enemy_list_in_game):
@@ -74,36 +58,30 @@ while running:
                 if element.x < -10:
                     enemy_list_in_game.pop(idx)
 
-                if player_rect.colliderect(element):
+                if player.get_rect().colliderect(element):
                     gameplay = False
 
         keys = pygame.key.get_pressed()
 
+        player_rect = player.get_rect()
+        player.draw(screen)
+
         if keys[pygame.K_LEFT]:
-            screen.blit(moving_left[player_anim_count], (settings.PLAYER_START_X, settings.PLAYER_START_Y))
+            player.move_left()
         else:
-            screen.blit(moving_right[player_anim_count], (settings.PLAYER_START_X, settings.PLAYER_START_Y))
+            player.move_right()
 
-        if keys[pygame.K_LEFT] and settings.PLAYER_START_X > settings.PLAYER_MOVE_LIMIT_LEFT:
-            settings.PLAYER_START_X -= settings.PLAYER_SPEED
-        elif keys[pygame.K_RIGHT] and settings.PLAYER_START_X < settings.PLAYER_MOVE_LIMIT_RIGHT:
-            settings.PLAYER_START_X += settings.PLAYER_SPEED
+        if keys[pygame.K_SPACE]:
+            player.jump()
 
-        if not is_jump:
-            if keys[pygame.K_SPACE]:
-                is_jump = True
-        else:
-            if settings.PLAYER_JUMP_COUNT >= -5:
-                if settings.PLAYER_JUMP_COUNT > 0:
-                    settings.PLAYER_START_Y -= (settings.PLAYER_JUMP_COUNT ** 2)
-                else:
-                    settings.PLAYER_START_Y += (settings.PLAYER_JUMP_COUNT ** 2)
-                settings.PLAYER_JUMP_COUNT -= 1
-            else:
-                is_jump = False
-                settings.PLAYER_JUMP_COUNT = 5
+        player.update()
 
-        player_anim_count = animation_character(player_anim_count, len(moving_right))
+        if keys[pygame.K_LEFT] and player.x > settings.PLAYER_MOVE_LIMIT_LEFT:
+            player.x -= player.speed
+        elif keys[pygame.K_RIGHT] and player.x < settings.PLAYER_MOVE_LIMIT_RIGHT:
+            player.x += player.speed
+
+
 
         background_x -= 5
 
@@ -130,7 +108,7 @@ while running:
         touch = pygame.mouse.get_pos()
         if restart_label_rect.collidepoint(touch) and pygame.mouse.get_pressed()[0]:
             gameplay = True
-            player_x = 150
+            player.reset()
             enemy_list_in_game.clear()
             bottles.clear()
             background_melody.play()
@@ -144,6 +122,6 @@ while running:
         if event.type == enemy_timer:
             enemy_list_in_game.append(enemy_police.get_rect(topleft=(620, 330)))
         if gameplay and event.type == pygame.KEYUP and event.key == pygame.K_b:
-            bottles.append(bottle.get_rect(topleft=(settings.PLAYER_START_X + 50, settings.PLAYER_START_Y + 50)))
+            bottles.append(player.throw_bottle())
 
     clock.tick(settings.FPS)
