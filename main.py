@@ -52,6 +52,8 @@ pygame.time.set_timer(enemy_timer, random.randrange(2000, 3000, 500))
 
 label = pygame.font.Font("fonts/Roboto-Black.ttf", 80)
 lose_label = label.render("LOSE", False, (193, 196, 199))
+restart_label = label.render("RESTART", False, (115, 132, 148))
+restart_label_rect = restart_label.get_rect(topleft=(120, 200))
 
 gameplay = True
 
@@ -107,7 +109,8 @@ while running:
             background_x = 0
     else:
         screen.fill((87, 88, 89))
-        screen.blit(lose_label, (200, 180))
+        screen.blit(lose_label, (200, 100))
+        screen.blit(restart_label, restart_label_rect)
         background_melody.stop()
 
     pygame.display.update()
