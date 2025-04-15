@@ -7,6 +7,7 @@ import pygame
 # Local modules
 import settings
 import player
+import enemy
 
 clock = pygame.time.Clock()
 
@@ -17,10 +18,7 @@ pygame.display.set_icon(pygame.image.load(settings.ICON_PATH).convert_alpha())
 
 background = pygame.image.load(settings.BACKGROUND_IMAGE_PATH).convert_alpha()
 
-enemy_police = pygame.image.load(settings.ENEMY_IMAGE_PATH + "enemy_movement_1.png").convert_alpha()
-enemy_anim_count = 0
-enemy_list_in_game = []
-
+enemies = []
 player = player.Player()
 
 background_x = 0
@@ -50,15 +48,14 @@ while running:
     screen.blit(background, (background_x + 600, 0))
     if gameplay:
 
-        if enemy_list_in_game:
-            for idx, element in enumerate(enemy_list_in_game):
-                screen.blit(enemy_police, element)
-                element.x -= 10
+        if enemies:
+            for idx, en in enumerate(enemies):
+                en.update()
+                en.draw(screen)
 
-                if element.x < -10:
-                    enemy_list_in_game.pop(idx)
-
-                if player.get_rect().colliderect(element):
+                if en.is_off_screen():
+                    enemies.pop(idx)
+                elif player.get_rect().colliderect(en.get_rect()):
                     gameplay = False
 
         keys = pygame.key.get_pressed()
@@ -94,11 +91,11 @@ while running:
                 el.x += 4
                 if el.x > 610:
                     bottles.pop(i)
-                if enemy_list_in_game:
-                    for idx, enemy_element in enumerate(enemy_list_in_game):
-                        if el.colliderect(enemy_element):
-                            enemy_list_in_game.pop(idx)
-                            bottles.pop(i)
+                for idx, en in enumerate(enemies):
+                    if el.colliderect(en.get_rect()):
+                        enemies.pop(idx)
+                        bottles.pop(i)
+                        break
     else:
         screen.fill(settings.COLOR_SCREEN_LOSE)
         screen.blit(lose_label, (200, 100))
@@ -109,7 +106,7 @@ while running:
         if restart_label_rect.collidepoint(touch) and pygame.mouse.get_pressed()[0]:
             gameplay = True
             player.reset()
-            enemy_list_in_game.clear()
+            enemies.clear()
             bottles.clear()
             background_melody.play()
 
@@ -120,7 +117,7 @@ while running:
             running = False
             pygame.quit()
         if event.type == enemy_timer:
-            enemy_list_in_game.append(enemy_police.get_rect(topleft=(620, 330)))
+            enemies.append(enemy.Enemy())
         if gameplay and event.type == pygame.KEYUP and event.key == pygame.K_b:
             bottles.append(player.throw_bottle())
 

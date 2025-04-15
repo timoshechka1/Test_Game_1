@@ -16,9 +16,14 @@ PLAYER_JUMP_COUNT = 5
 PLAYER_MOVE_LIMIT_LEFT = 50
 PLAYER_MOVE_LIMIT_RIGHT = 200
 
+# Enemy settings
+ENEMY_START_X = 620
+ENEMY_START_Y = 340
+ENEMY_SPEED = 10
+
 # Animation settings
 PLAYER_ANIM_FRAMES = 6
-ENEMY_ANIM_FRAMES = 0
+ENEMY_ANIM_FRAMES = 8
 OBSTACLES_ANIM_FRAMES = 0
 BOTTLES_ANIM_FRAMES = 0
 
@@ -37,7 +42,7 @@ ICON_PATH = ASSET_PATH + "icon.png"
 BACKGROUND_IMAGE_PATH = ASSET_PATH + "background.png"
 PLAYER_LEFT_PATH = ASSET_PATH + "player_movement_left/"
 PLAYER_RIGHT_PATH = ASSET_PATH + "player_movement_right/"
-ENEMY_IMAGE_PATH = ASSET_PATH + "enemy_movement/"
+ENEMY_IMAGE_PATH = ASSET_PATH + "policeman_movement/"
 BOTTLE_IMAGE_PATH = ASSET_PATH + "bottle_movement/"
 FONT_PATH = "fonts/Roboto-Black.ttf"
 

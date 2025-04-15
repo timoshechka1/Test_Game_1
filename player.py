@@ -25,17 +25,16 @@ class Player:
         """
         self.x = settings.PLAYER_START_X
         self.y = settings.PLAYER_START_Y
+        self.frames = settings.PLAYER_ANIM_FRAMES
         self.speed = settings.PLAYER_SPEED
         self.is_jump = False
         self.jump_count = settings.PLAYER_JUMP_COUNT
         self.moving_left = [
             pygame.image.load(f"{settings.PLAYER_LEFT_PATH}player_movement_left_{i}.png").convert_alpha()
-            for i in range(1, 7)
-        ]
+            for i in range(1, self.frames + 1)]
         self.moving_right = [
             pygame.image.load(f"{settings.PLAYER_RIGHT_PATH}player_movement_right_{i}.png").convert_alpha()
-            for i in range(1, 7)
-        ]
+            for i in range(1, self.frames + 1)]
         self.anim_count = 0
         self.direction = "right"
         self.rect = self.moving_right[0].get_rect(topleft=(self.x, self.y))
@@ -153,5 +152,5 @@ class Player:
         - Loads the bottle image on each call (can be optimized)
         - Returns only the Rect without creating the bottle object
         """
-        image = pygame.image.load(settings.BOTTLE_IMAGE_PATH).convert_alpha()
+        image = pygame.image.load(settings.BOTTLE_IMAGE_PATH + "glass-bottle.png").convert_alpha()
         return image.get_rect(topleft=(self.x + 50, self.y + 50))
