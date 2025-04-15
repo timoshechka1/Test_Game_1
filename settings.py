@@ -1,0 +1,45 @@
+# Screen and frame settings
+SCREEN_WIDTH = 600
+SCREEN_HEIGHT = 476
+FPS = 10
+
+# Color settings
+COLOR_SCREEN_LOSE = (58, 35, 46)
+TEXT_COLOR_LOSE = (137, 0, 0)
+TEXT_COLOR_RESTART = (230, 243, 53)
+
+# Player settings
+PLAYER_START_X = 150
+PLAYER_START_Y = 333
+PLAYER_SPEED = 5
+PLAYER_JUMP_COUNT = 5
+PLAYER_MOVE_LIMIT_LEFT = 50
+PLAYER_MOVE_LIMIT_RIGHT = 200
+
+# Animation settings
+PLAYER_ANIM_FRAMES = 6
+ENEMY_ANIM_FRAMES = 0
+OBSTACLES_ANIM_FRAMES = 0
+BOTTLES_ANIM_FRAMES = 0
+
+# Sound settings
+BACKGROUND_MELODY = "sounds/background_melody.mp3"
+BACKGROUND_MELODY_VOLUME = 0.01
+
+# Timers and Time
+ENEMY_SPAWN_MIN_TIME = 2000
+ENEMY_SPAWN_MAX_TIME = 5000
+ENEMY_SPAWN_STEP = 500
+
+# Paths to resources
+ASSET_PATH = "images/"
+ICON_PATH = ASSET_PATH + "icon.png"
+BACKGROUND_IMAGE_PATH = ASSET_PATH + "background.png"
+PLAYER_LEFT_PATH = ASSET_PATH + "player_movement_left/"
+PLAYER_RIGHT_PATH = ASSET_PATH + "player_movement_right/"
+ENEMY_IMAGE_PATH = ASSET_PATH + "enemy_movement/"
+BOTTLE_IMAGE_PATH = ASSET_PATH + "bottle_movement/"
+FONT_PATH = "fonts/Roboto-Black.ttf"
+
+# Debugging
+DEBUG_MODE = False

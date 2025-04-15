@@ -1,5 +1,6 @@
 import pygame
 import random
+import settings
 
 def animation_character(current_count, max_frames):
     return (current_count + 1) % max_frames
@@ -8,54 +9,52 @@ def animation_character(current_count, max_frames):
 clock = pygame.time.Clock()
 
 pygame.init()
-screen = pygame.display.set_mode((600, 476))
+screen = pygame.display.set_mode((settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT))
 pygame.display.set_caption("Test Game 1")
-pygame.display.set_icon(pygame.image.load("images/icon.png").convert_alpha())
+pygame.display.set_icon(pygame.image.load(settings.ICON_PATH).convert_alpha())
 
-background = pygame.image.load("images/background.png").convert_alpha()
+background = pygame.image.load(settings.BACKGROUND_IMAGE_PATH).convert_alpha()
 
-enemy_police = pygame.image.load("images/enemy_movement/enemy_movement_1.png").convert_alpha()
+enemy_police = pygame.image.load(settings.ENEMY_IMAGE_PATH + "enemy_movement_1.png").convert_alpha()
 enemy_anim_count = 0
 enemy_list_in_game = []
 
 moving_left = [
-    pygame.image.load("images/player_movement_left/player_movement_left_1.png").convert_alpha(),
-    pygame.image.load("images/player_movement_left/player_movement_left_2.png").convert_alpha(),
-    pygame.image.load("images/player_movement_left/player_movement_left_3.png").convert_alpha(),
-    pygame.image.load("images/player_movement_left/player_movement_left_4.png").convert_alpha(),
-    pygame.image.load("images/player_movement_left/player_movement_left_5.png").convert_alpha(),
-    pygame.image.load("images/player_movement_left/player_movement_left_6.png").convert_alpha()
+    pygame.image.load(settings.PLAYER_LEFT_PATH + "player_movement_left_1.png").convert_alpha(),
+    pygame.image.load(settings.PLAYER_LEFT_PATH + "player_movement_left_2.png").convert_alpha(),
+    pygame.image.load(settings.PLAYER_LEFT_PATH + "player_movement_left_3.png").convert_alpha(),
+    pygame.image.load(settings.PLAYER_LEFT_PATH + "player_movement_left_4.png").convert_alpha(),
+    pygame.image.load(settings.PLAYER_LEFT_PATH + "player_movement_left_5.png").convert_alpha(),
+    pygame.image.load(settings.PLAYER_LEFT_PATH + "player_movement_left_6.png").convert_alpha()
 ]
 moving_right = [
-    pygame.image.load("images/player_movement_right/player_movement_right_1.png").convert_alpha(),
-    pygame.image.load("images/player_movement_right/player_movement_right_2.png").convert_alpha(),
-    pygame.image.load("images/player_movement_right/player_movement_right_3.png").convert_alpha(),
-    pygame.image.load("images/player_movement_right/player_movement_right_4.png").convert_alpha(),
-    pygame.image.load("images/player_movement_right/player_movement_right_5.png").convert_alpha(),
-    pygame.image.load("images/player_movement_right/player_movement_right_6.png").convert_alpha()
+    pygame.image.load(settings.PLAYER_RIGHT_PATH + "player_movement_right_1.png").convert_alpha(),
+    pygame.image.load(settings.PLAYER_RIGHT_PATH + "player_movement_right_2.png").convert_alpha(),
+    pygame.image.load(settings.PLAYER_RIGHT_PATH + "player_movement_right_3.png").convert_alpha(),
+    pygame.image.load(settings.PLAYER_RIGHT_PATH + "player_movement_right_4.png").convert_alpha(),
+    pygame.image.load(settings.PLAYER_RIGHT_PATH + "player_movement_right_5.png").convert_alpha(),
+    pygame.image.load(settings.PLAYER_RIGHT_PATH + "player_movement_right_6.png").convert_alpha()
 ]
 player_anim_count = 0
-player_speed = 5
-player_x = 150
-player_y= 333
 is_jump = False
-jump_count = 5
 
 background_x = 0
-background_melody = pygame.mixer.Sound("sounds/background_melody.mp3")
-background_melody.set_volume(0.01)
+background_melody = pygame.mixer.Sound(settings.BACKGROUND_MELODY)
+background_melody.set_volume(settings.BACKGROUND_MELODY_VOLUME)
 background_melody.play()
 
 
 enemy_timer = pygame.USEREVENT + 1
-pygame.time.set_timer(enemy_timer, random.randrange(2000, 3000, 500))
+pygame.time.set_timer(enemy_timer, random.randrange(settings.ENEMY_SPAWN_MIN_TIME,
+                                                    settings.ENEMY_SPAWN_MAX_TIME,
+                                                    settings.ENEMY_SPAWN_STEP))
 
-label = pygame.font.Font("fonts/Roboto-Black.ttf", 80)
-lose_label = label.render("LOSE", False, (193, 196, 199))
-restart_label = label.render("RESTART", False, (115, 132, 148))
+label = pygame.font.Font(settings.FONT_PATH, 80)
+lose_label = label.render("LOSE", False, settings.TEXT_COLOR_LOSE)
+restart_label = label.render("RESTART", False, settings.TEXT_COLOR_RESTART)
 restart_label_rect = restart_label.get_rect(topleft=(120, 200))
 
-bottle = pygame.image.load('images/glass-bottle.png').convert_alpha()
+bottle = pygame.image.load(settings.BOTTLE_IMAGE_PATH + "glass-bottle.png").convert_alpha()
 bottles = []
 
 gameplay = True
@@ -65,7 +64,7 @@ while running:
     screen.blit(background, (background_x, 0))
     screen.blit(background, (background_x + 600, 0))
     if gameplay:
-        player_rect = moving_left[0].get_rect(topleft=(player_x, player_y))
+        player_rect = moving_left[0].get_rect(topleft=(settings.PLAYER_START_X, settings.PLAYER_START_Y))
 
         if enemy_list_in_game:
             for idx, element in enumerate(enemy_list_in_game):
@@ -81,28 +80,28 @@ while running:
         keys = pygame.key.get_pressed()
 
         if keys[pygame.K_LEFT]:
-            screen.blit(moving_left[player_anim_count], (player_x, player_y))
+            screen.blit(moving_left[player_anim_count], (settings.PLAYER_START_X, settings.PLAYER_START_Y))
         else:
-            screen.blit(moving_right[player_anim_count], (player_x, player_y))
+            screen.blit(moving_right[player_anim_count], (settings.PLAYER_START_X, settings.PLAYER_START_Y))
 
-        if keys[pygame.K_LEFT] and player_x > 50:
-            player_x -= player_speed
-        elif keys[pygame.K_RIGHT] and player_x < 200:
-            player_x += player_speed
+        if keys[pygame.K_LEFT] and settings.PLAYER_START_X > settings.PLAYER_MOVE_LIMIT_LEFT:
+            settings.PLAYER_START_X -= settings.PLAYER_SPEED
+        elif keys[pygame.K_RIGHT] and settings.PLAYER_START_X < settings.PLAYER_MOVE_LIMIT_RIGHT:
+            settings.PLAYER_START_X += settings.PLAYER_SPEED
 
         if not is_jump:
             if keys[pygame.K_SPACE]:
                 is_jump = True
         else:
-            if jump_count >= -5:
-                if jump_count > 0:
-                    player_y -= (jump_count ** 2) / 2
+            if settings.PLAYER_JUMP_COUNT >= -5:
+                if settings.PLAYER_JUMP_COUNT > 0:
+                    settings.PLAYER_START_Y -= (settings.PLAYER_JUMP_COUNT ** 2)
                 else:
-                    player_y += (jump_count ** 2) / 2
-                jump_count -= 1
+                    settings.PLAYER_START_Y += (settings.PLAYER_JUMP_COUNT ** 2)
+                settings.PLAYER_JUMP_COUNT -= 1
             else:
                 is_jump = False
-                jump_count = 5
+                settings.PLAYER_JUMP_COUNT = 5
 
         player_anim_count = animation_character(player_anim_count, len(moving_right))
 
@@ -123,7 +122,7 @@ while running:
                             enemy_list_in_game.pop(idx)
                             bottles.pop(i)
     else:
-        screen.fill((87, 88, 89))
+        screen.fill(settings.COLOR_SCREEN_LOSE)
         screen.blit(lose_label, (200, 100))
         screen.blit(restart_label, restart_label_rect)
         background_melody.stop()
@@ -145,6 +144,6 @@ while running:
         if event.type == enemy_timer:
             enemy_list_in_game.append(enemy_police.get_rect(topleft=(620, 330)))
         if gameplay and event.type == pygame.KEYUP and event.key == pygame.K_b:
-            bottles.append(bottle.get_rect(topleft=(player_x + 50, player_y + 50)))
+            bottles.append(bottle.get_rect(topleft=(settings.PLAYER_START_X + 50, settings.PLAYER_START_Y + 50)))
 
-    clock.tick(10)
+    clock.tick(settings.FPS)
