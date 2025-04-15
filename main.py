@@ -111,9 +111,6 @@ while running:
         if background_x == -600:
             background_x = 0
 
-        if keys[pygame.K_b]:
-            bottles.append(bottle.get_rect(topleft=(player_x + 50, player_y + 50)))
-
         if bottles:
             for i, el in enumerate(bottles):
                 screen.blit(bottle, (el.x, el.y))
@@ -121,8 +118,8 @@ while running:
                 if el.x > 610:
                     bottles.pop(i)
                 if enemy_list_in_game:
-                    for idx, enemy in enumerate(enemy_list_in_game):
-                        if el.colliderect(enemy):
+                    for idx, enemy_element in enumerate(enemy_list_in_game):
+                        if el.colliderect(enemy_element):
                             enemy_list_in_game.pop(idx)
                             bottles.pop(i)
     else:
@@ -147,5 +144,7 @@ while running:
             pygame.quit()
         if event.type == enemy_timer:
             enemy_list_in_game.append(enemy_police.get_rect(topleft=(620, 330)))
+        if gameplay and event.type == pygame.KEYUP and event.key == pygame.K_b:
+            bottles.append(bottle.get_rect(topleft=(player_x + 50, player_y + 50)))
 
     clock.tick(10)
