@@ -8,6 +8,7 @@ import enemy
 import spawner
 import bottle
 import ui
+import sound
 
 clock = pygame.time.Clock()
 pygame.init()
@@ -18,10 +19,7 @@ pygame.display.set_icon(pygame.image.load(settings.ICON_PATH).convert_alpha())
 
 background = pygame.image.load(settings.BACKGROUND_IMAGE_PATH).convert_alpha()
 background_x = 0
-background_melody = pygame.mixer.Sound(settings.BACKGROUND_MELODY)
-background_melody.set_volume(settings.BACKGROUND_MELODY_VOLUME)
-background_melody.play()
-music_stopped = False
+sound.play_background_music()
 
 player_instance = player.Player()
 enemies = []
@@ -47,7 +45,7 @@ while running:
                     enemies.pop(idx)
                 elif player_instance.get_rect().colliderect(en.get_rect()):
                     gameplay = False
-                    background_melody.stop()
+                    sound.stop_background_music()
 
         keys = pygame.key.get_pressed()
 
@@ -97,7 +95,7 @@ while running:
                 player_instance.reset()
                 enemies.clear()
                 bottles.clear()
-                background_melody.play()
+                sound.play_background_music()
         if event.type == pygame.QUIT:
             running = False
         if event.type == enemy_timer:
