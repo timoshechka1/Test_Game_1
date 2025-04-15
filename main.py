@@ -113,6 +113,13 @@ while running:
         screen.blit(restart_label, restart_label_rect)
         background_melody.stop()
 
+        touch = pygame.mouse.get_pos()
+        if restart_label_rect.collidepoint(touch) and pygame.mouse.get_pressed()[0]:
+            gameplay = True
+            player_x = 150
+            enemy_list_in_game.clear()
+            background_melody.play()
+
     pygame.display.update()
 
     for event in pygame.event.get():
